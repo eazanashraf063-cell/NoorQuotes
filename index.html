@@ -35,7 +35,6 @@ body {
   transition:0.4s ease;
 }
 
-/* soft dark overlay */
 body::before {
   content:"";
   position:fixed;
@@ -44,7 +43,6 @@ body::before {
   z-index:-1;
 }
 
-/* ===== GLOBAL BUTTONS ===== */
 button {
   border:none;
   border-radius:12px;
@@ -64,7 +62,6 @@ button:active {
   transform:scale(0.97);
 }
 
-/* ===== TOP BAR ===== */
 .top {
   position:fixed;
   top:15px;
@@ -91,7 +88,6 @@ button:active {
   animation:fadeIn 0.25s ease;
 }
 
-/* ===== SCREEN ANIMATIONS ===== */
 .screen {
   position:absolute;
   inset:0;
@@ -106,13 +102,12 @@ button:active {
   display:none !important;
 }
 
-/* ===== MOOD CARD ===== */
 .mood-card {
   background:var(--card);
-  padding:42px;
+  padding:40px;
   border-radius:22px;
   text-align:center;
-  max-width:720px;
+  max-width:800px;
   width:100%;
   box-shadow:0 20px 50px rgba(0,0,0,0.35);
   animation:floatIn 0.6s ease;
@@ -120,18 +115,20 @@ button:active {
 
 .moods {
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-  gap:12px;
+  grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));
+  gap:10px;
   margin-top:20px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 5px;
 }
 
 .moods button {
   padding:14px;
   border-radius:14px;
-  transition:0.25s ease;
+  font-size: 14px;
 }
 
-/* ===== VERSE CARD ===== */
 .container {
   text-align:center;
   max-width:720px;
@@ -144,7 +141,6 @@ button:active {
   border-radius:22px;
   box-shadow:0 20px 50px rgba(0,0,0,0.35);
   animation:floatIn 0.6s ease;
-  transition:0.4s ease;
 }
 
 .verse {
@@ -161,7 +157,6 @@ button:active {
   transform:translateY(0);
 }
 
-/* ===== BUTTONS ===== */
 .verse-btn {
   margin-top:18px;
   padding:12px 16px;
@@ -176,7 +171,6 @@ button:active {
   background:gold;
 }
 
-/* ===== TEXT ===== */
 .setting-title {
   margin:10px 0 6px;
   font-size:12px;
@@ -191,7 +185,6 @@ button:active {
   border-radius:10px;
 }
 
-/* ===== ANIMATIONS ===== */
 @keyframes fadeIn {
   from {opacity:0; transform:translateY(8px);}
   to {opacity:1; transform:translateY(0);}
@@ -206,162 +199,147 @@ button:active {
   from {opacity:0; transform:translateY(15px);}
   to {opacity:1; transform:translateY(0);}
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="top">
-
-<button id="themeBtn" onclick="toggleTheme()">🌙</button>
-
-<div class="settings">
-
-<button onclick="toggleSettings()">⚙️</button>
-
-<div id="panel" class="panel">
-
-<div class="setting-title">Themes</div>
-
-<button class="small-btn" onclick="setBg('none')">Default</button>
-<button class="small-btn" onclick="setBg('night')">Night Sky</button>
-<button class="small-btn" onclick="setBg('ocean')">Ocean</button>
-<button class="small-btn" onclick="setBg('gradient')">Gradient</button>
-
-<div class="setting-title">Favourites</div>
-
-<button class="small-btn" onclick="viewFavourites()">View ⭐</button>
-
-</div>
-</div>
+  <button id="themeBtn" onclick="toggleTheme()">🌙</button>
+  <div class="settings">
+    <button onclick="toggleSettings()">⚙️</button>
+    <div id="panel" class="panel">
+      <div class="setting-title">Themes</div>
+      <button class="small-btn" onclick="setBg('none')">Default</button>
+      <button class="small-btn" onclick="setBg('night')">Night Sky</button>
+      <button class="small-btn" onclick="setBg('ocean')">Ocean</button>
+      <button class="small-btn" onclick="setBg('gradient')">Gradient</button>
+      <div class="setting-title">Favourites</div>
+      <button class="small-btn" onclick="viewFavourites()">View ⭐</button>
+    </div>
+  </div>
 </div>
 
-<!-- MOOD -->
+<!-- MOOD SCREEN -->
 <div id="moodScreen" class="screen">
-
-<div class="mood-card">
-
-<h1>How are you feeling?</h1>
-
-<div class="moods">
-<button onclick="startVerses('Anxious')">Anxious</button>
-<button onclick="startVerses('Depressed')">Depressed</button>
-<button onclick="startVerses('Lonely')">Lonely</button>
-<button onclick="startVerses('Overwhelmed')">Overwhelmed</button>
-<button onclick="startVerses('Irritable')">Irritable</button>
-<button onclick="startVerses('Exhausted')">Exhausted</button>
-<button onclick="startVerses('Ashamed')">Ashamed</button>
-<button onclick="startVerses('Betrayed')">Betrayed</button>
-<button onclick="startVerses('Fearful')">Fearful</button>
-<button onclick="startVerses('Restless')">Restless</button>
+  <div class="mood-card">
+    <h1>How are you feeling?</h1>
+    <div class="moods">
+      <button onclick="startVerses('Anxious')">Anxious</button>
+      <button onclick="startVerses('Depressed')">Depressed</button>
+      <button onclick="startVerses('Lonely')">Lonely</button>
+      <button onclick="startVerses('Overwhelmed')">Overwhelmed</button>
+      <button onclick="startVerses('Irritable')">Irritable</button>
+      <button onclick="startVerses('Exhausted')">Exhausted</button>
+      <button onclick="startVerses('Ashamed')">Ashamed</button>
+      <button onclick="startVerses('Betrayed')">Betrayed</button>
+      <button onclick="startVerses('Fearful')">Fearful</button>
+      <button onclick="startVerses('Restless')">Restless</button>
+      <button onclick="startVerses('Numb')">Numb</button>
+      <button onclick="startVerses('Empty')">Empty</button>
+      <button onclick="startVerses('Apathetic')">Apathetic</button>
+      <button onclick="startVerses('Insecure')">Insecure</button>
+      <button onclick="startVerses('Enraged')">Enraged</button>
+    </div>
+  </div>
 </div>
 
-</div>
-</div>
-
-<!-- VERSE -->
+<!-- VERSE SCREEN -->
 <div id="verseScreen" class="screen hidden">
-
-<div class="container">
-<div class="card">
-
-<button class="back-btn" onclick="goBack()">← Back</button>
-
-<div id="verse" class="verse"></div>
-
-<button class="verse-btn" onclick="showVerse()">A Du'a, please</button>
-<button class="fav-btn" onclick="saveFavourite()">⭐</button>
-
-</div>
-</div>
+  <div class="container">
+    <div class="card">
+      <button class="back-btn" onclick="goBack()">← Back</button>
+      <div id="verse" class="verse"></div>
+      <button class="verse-btn" onclick="showVerse()">A Du'a, please</button>
+      <button class="fav-btn" onclick="saveFavourite()">⭐</button>
+    </div>
+  </div>
 </div>
 
 <script>
+// All moods currently share these verses. You can separate them later.
+const sharedVerses = [
+  "Allah does not burden a soul beyond that it can bear.",
+  "Verily, with hardship comes ease.",
+  "So remember Me; I will remember you.",
+  "Allah is the Ally of those who believe.",
+  "Indeed, my Lord is near and responsive.",
+  "My mercy encompasses all things."
+];
 
 const moodVerses = {
-Anxious:["Breathe. Allah is near.","Trust Him."],
-Depressed:["With hardship comes ease.","It will pass."],
-Fearful:["Allah is with you.","Fear not."],
-Restless:["Remember Allah, hearts find peace.","Pause."]
+  Anxious: sharedVerses,
+  Depressed: sharedVerses,
+  Lonely: sharedVerses,
+  Overwhelmed: sharedVerses,
+  Irritable: sharedVerses,
+  Exhausted: sharedVerses,
+  Ashamed: sharedVerses,
+  Betrayed: sharedVerses,
+  Fearful: sharedVerses,
+  Restless: sharedVerses,
+  Numb: sharedVerses,
+  Empty: sharedVerses,
+  Apathetic: sharedVerses,
+  Insecure: sharedVerses,
+  Enraged: sharedVerses
 };
 
-let currentMood="";
-let currentList=[];
+let currentMood = "";
+let currentList = [];
 
-function startVerses(mood){
-currentMood=mood;
-loadVerses();
-
-document.getElementById("moodScreen").classList.add("hidden");
-document.getElementById("verseScreen").classList.remove("hidden");
-
-showVerse();
+function startVerses(mood) {
+  currentMood = mood;
+  currentList = moodVerses[mood] || ["No du'as found"];
+  document.getElementById("moodScreen").classList.add("hidden");
+  document.getElementById("verseScreen").classList.remove("hidden");
+  showVerse();
 }
 
-function loadVerses(){
-currentList=moodVerses[currentMood]||["No du'as found"];
+function showVerse() {
+  const box = document.getElementById("verse");
+  const v = currentList[Math.floor(Math.random() * currentList.length)];
+  box.classList.remove("show");
+  setTimeout(() => {
+    box.innerText = v;
+    box.classList.add("show");
+  }, 150);
 }
 
-function showVerse(){
-
-const box=document.getElementById("verse");
-
-const v=currentList[Math.floor(Math.random()*currentList.length)];
-
-box.classList.remove("show");
-
-setTimeout(()=>{
-box.innerText=v;
-box.classList.add("show");
-},150);
-
+function goBack() {
+  document.getElementById("verseScreen").classList.add("hidden");
+  document.getElementById("moodScreen").classList.remove("hidden");
 }
 
-function goBack(){
-document.getElementById("verseScreen").classList.add("hidden");
-document.getElementById("moodScreen").classList.remove("hidden");
+function setBg(type) {
+  if(type === "none") document.body.style.backgroundImage = "none";
+  if(type === "night") document.body.style.backgroundImage = "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb')";
+  if(type === "ocean") document.body.style.backgroundImage = "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')";
+  if(type === "gradient") document.body.style.backgroundImage = "linear-gradient(120deg,#0f1115,#1f2937)";
 }
 
-function setBg(type){
-
-if(type==="none")
-document.body.style.backgroundImage="none";
-
-if(type==="night")
-document.body.style.backgroundImage="url('https://images.unsplash.com/photo-1506744038136-46273834b3fb')";
-
-if(type==="ocean")
-document.body.style.backgroundImage="url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e')";
-
-if(type==="gradient")
-document.body.style.backgroundImage="linear-gradient(120deg,#0f1115,#1f2937)";
+function toggleSettings() {
+  const p = document.getElementById("panel");
+  p.style.display = p.style.display === "block" ? "none" : "block";
 }
 
-function toggleSettings(){
-const p=document.getElementById("panel");
-p.style.display=p.style.display==="block"?"none":"block";
+function toggleTheme() {
+  document.body.classList.toggle("light");
+  document.getElementById("themeBtn").innerText = document.body.classList.contains("light") ? "☀️" : "🌙";
 }
 
-function toggleTheme(){
-document.body.classList.toggle("light");
-document.getElementById("themeBtn").innerText=
-document.body.classList.contains("light")?"☀️":"🌙";
+function saveFavourite() {
+  const verse = document.getElementById("verse").innerText;
+  let favs = JSON.parse(localStorage.getItem("favs")) || [];
+  favs.push(verse);
+  localStorage.setItem("favs", JSON.stringify(favs));
+  alert("Saved ⭐");
 }
 
-function saveFavourite(){
-const verse=document.getElementById("verse").innerText;
-let favs=JSON.parse(localStorage.getItem("favs"))||[];
-favs.push(verse);
-localStorage.setItem("favs",JSON.stringify(favs));
-alert("Saved ⭐");
+function viewFavourites() {
+  let favs = JSON.parse(localStorage.getItem("favs")) || [];
+  alert(favs.join("\n\n") || "No favourites yet.");
 }
-
-function viewFavourites(){
-let favs=JSON.parse(localStorage.getItem("favs"))||[];
-alert(favs.join("\n\n")||"No favourites yet.");
-}
-
 </script>
 
 </body>
