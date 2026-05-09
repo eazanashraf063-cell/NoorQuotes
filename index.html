@@ -13,12 +13,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
+            /* Default: Deep Sea */
+            --bg: linear-gradient(135deg, #09203f 0%, #537895 100%);
+            --text: #ffffff;
+            --accent: #00d2ff;
+            --btn-bg: rgba(0, 0, 0, 0.2);
+        }
+
+        body.mist {
             --bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             --text: #1f2937;
             --accent: #2563eb;
             --btn-bg: rgba(255, 255, 255, 0.4);
         }
-
         body.midnight {
             --bg: linear-gradient(135deg, #0f1115 0%, #1a1d23 100%);
             --text: #e6e6e6;
@@ -37,12 +44,6 @@
             --accent: #b3932d;
             --btn-bg: rgba(255, 255, 255, 0.5);
         }
-        body.deepsea {
-            --bg: linear-gradient(135deg, #09203f 0%, #537895 100%);
-            --text: #ffffff;
-            --accent: #00d2ff;
-            --btn-bg: rgba(0, 0, 0, 0.2);
-        }
 
         body { 
             margin:0; font-family:'Inter', sans-serif; 
@@ -51,6 +52,18 @@
             color:var(--text); 
             height:100vh; display:flex; justify-content:center; align-items:center; 
             overflow:hidden; transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+
+        .brand-name {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            font-size: 12px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            font-weight: 600;
+            z-index: 100;
         }
 
         .screen { 
@@ -116,19 +129,21 @@
         @keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
     </style>
 </head>
-<body>
+<body class="deepsea">
+
+<div class="brand-name">Invocation</div>
 
 <div class="top-nav">
     <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
     <div id="panel" class="panel">
         <button style="width:100%; padding:12px; margin-bottom: 10px;" onclick="viewFavourites()">⭐ Favourites</button>
-        <h4>Atmosphere</h4>
+        <h4>Themes</h4>
         <div class="theme-grid">
-            <button class="theme-option" onclick="setTheme('default')">Morning Mist</button>
+            <button class="theme-option" onclick="setTheme('deepsea')">Deep Sea</button>
+            <button class="theme-option" onclick="setTheme('mist')">Morning Mist</button>
             <button class="theme-option" onclick="setTheme('midnight')">Midnight Secret</button>
             <button class="theme-option" onclick="setTheme('olive')">Olive Grove</button>
             <button class="theme-option" onclick="setTheme('golden')">Golden Hour</button>
-            <button class="theme-option" onclick="setTheme('deepsea')">Deep Sea</button>
         </div>
     </div>
 </div>
@@ -284,13 +299,13 @@ function toggleSettings() {
 }
 
 function setTheme(themeName) {
-    document.body.className = themeName === 'default' ? '' : themeName;
-    localStorage.setItem('najwa-theme', themeName);
+    document.body.className = themeName;
+    localStorage.setItem('invocation-theme', themeName);
 }
 
 window.onload = () => {
-    const savedTheme = localStorage.getItem('najwa-theme');
-    if (savedTheme) setTheme(savedTheme);
+    const savedTheme = localStorage.getItem('invocation-theme') || 'deepsea';
+    setTheme(savedTheme);
 };
 
 function saveFavourite() {
