@@ -3,65 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Najwa - Spiritual Comfort</title>
+    <title>Najwa</title>
+    <!-- PWA Manifest & Service Worker -->
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --bg:#f7f8fa; --card:#ffffff; --text:#1f2937; --accent:#2563eb; --danger:#ef4444; --gold:#d4af37; }
-        body.dark { --bg:#0f1115; --card:#171a21; --text:#e6e6e6; --accent:#6ee7ff; }
+        :root { 
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); 
+            --text: #1f2937; 
+            --accent: #2563eb; 
+            --btn-bg: rgba(255, 255, 255, 0.4);
+            --gold: #b3932d;
+        }
+        body.dark { 
+            --bg-gradient: linear-gradient(135deg, #0f1115 0%, #1a1d23 100%); 
+            --text: #e6e6e6; 
+            --accent: #6ee7ff; 
+            --btn-bg: rgba(255, 255, 255, 0.05);
+            --gold: #d4af37;
+        }
         
         body { 
             margin:0; font-family:'Inter', sans-serif; 
-            background: var(--bg); color:var(--text); 
+            background: var(--bg-gradient); 
+            background-attachment: fixed;
+            color:var(--text); 
             height:100vh; display:flex; justify-content:center; align-items:center; 
-            overflow:hidden; transition: 0.3s ease; 
+            overflow:hidden; transition: background 0.5s ease; 
         }
 
-        button { border:none; border-radius:12px; background:var(--accent); color:#fff; font-weight:600; cursor:pointer; transition:0.2s ease; outline: none; }
-        body.dark button { color: #000; }
-        button:hover { transform:translateY(-2px); filter: brightness(1.1); }
-        button:active { transform:scale(0.97); }
-
-        .top { position:fixed; top:15px; right:15px; display:flex; gap:10px; z-index:100; }
-        .panel { 
-            display:none; position:absolute; right:0; top:45px; 
-            background:var(--card); padding:14px; border-radius:14px; 
-            width:220px; box-shadow:0 10px 30px rgba(0,0,0,0.15); 
-            animation:fadeIn 0.2s ease; 
+        .screen { 
+            position:absolute; inset:0; 
+            display:flex; flex-direction:column; justify-content:center; align-items:center; 
+            padding:30px; text-align:center; transition: 0.3s; 
+            overflow-y: auto;
         }
-
-        .screen { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:20px; transition: 0.3s; overflow-y: auto; }
         .hidden { display:none !important; }
 
-        .mood-card, .card { 
-            background:var(--card); padding:40px; border-radius:24px; 
-            text-align:center; max-width:550px; width:100%; 
-            box-shadow:0 20px 50px rgba(0,0,0,0.05); 
+        button { 
+            border: 1px solid rgba(128,128,128,0.2); 
+            border-radius:16px; 
+            background: var(--btn-bg); 
+            color:var(--text); 
+            font-weight:500; 
+            cursor:pointer; 
+            transition:0.3s ease; 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            outline: none;
+        }
+        button:hover { background: var(--accent); color: white; border-color: var(--accent); transform: translateY(-2px); }
+
+        .top { position:fixed; top:20px; right:20px; display:flex; gap:10px; z-index:100; }
+        
+        .panel { 
+            display:none; position:absolute; right:0; top:50px; 
+            background: var(--btn-bg); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding:10px; border-radius:18px; width:180px; 
+            border: 1px solid rgba(128,128,128,0.2);
+            animation: fadeIn 0.2s ease;
         }
 
-        .moods { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:12px; margin-top:20px; }
-        .moods button { padding:14px; border-radius:14px; color: var(--text); background: transparent; border: 1px solid var(--accent); }
-        .moods button:hover { background: var(--accent); color: #fff; }
+        .moods { 
+            display:grid; grid-template-columns:repeat(2, 1fr); 
+            gap:15px; margin-top:30px; width: 100%; max-width: 400px;
+        }
+        .moods button { padding:20px 10px; font-size: 15px; }
 
-        .verse { font-size:18px; line-height:1.8; min-height:130px; opacity:0; transition:0.25s ease; margin: 20px 0; white-space: pre-line; }
+        .verse { 
+            font-size:22px; line-height:1.8; font-weight: 300;
+            min-height:180px; opacity:0; transition:0.4s ease; 
+            margin: 40px 0; max-width: 600px; white-space: pre-line;
+        }
         .verse.show { opacity:1; }
 
-        /* Favourites List Styling */
-        #favList { width: 100%; max-width: 550px; display: flex; flex-direction: column; gap: 15px; padding-bottom: 40px; margin-top: 20px; }
+        #favList { width: 100%; max-width: 600px; margin-top: 20px; padding-bottom: 50px; }
         .fav-item { 
-            background: var(--card); padding: 25px; border-radius: 18px; 
-            text-align: left; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-            animation: fadeIn 0.3s ease; white-space: pre-line; line-height: 1.6;
+            padding: 30px; border-bottom: 1px solid rgba(128,128,128,0.1);
+            text-align: left; animation: fadeIn 0.3s ease; white-space: pre-line; line-height: 1.6;
         }
-        .fav-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; }
-        
-        .action-btn { background: transparent; font-size: 13px; padding: 6px 12px; border-radius: 8px; border: 1px solid; }
-        .unsave-btn { color: var(--danger); border-color: var(--danger); }
-        .unsave-btn:hover { background: var(--danger); color: white; }
-        .copy-btn { color: var(--accent); border-color: var(--accent); }
-        .copy-btn:hover { background: var(--accent); color: white; }
+        .fav-actions { display: flex; gap: 15px; margin-top: 15px; }
 
-        .nav-btn { background: transparent; color: var(--accent); padding: 10px; margin-bottom: 10px; font-size: 14px; }
-        .header-title { margin-top: 60px; font-weight: 600; font-size: 24px; }
+        .action-btn { background: transparent; font-size: 12px; padding: 5px 12px; border-radius: 8px; }
+        .nav-btn { background: transparent; border: none; color: var(--accent); margin-bottom: 20px; backdrop-filter: none; }
+
+        h1 { font-weight: 300; letter-spacing: -1px; font-size: 32px; }
 
         @keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
     </style>
@@ -69,48 +101,43 @@
 <body>
 
 <div class="top">
-    <button id="themeBtn" onclick="toggleTheme()" style="padding: 10px; background: transparent; font-size: 1.2rem;">🌙</button>
+    <button id="themeBtn" onclick="toggleTheme()" style="padding: 10px; background: transparent; border:none; font-size: 1.2rem;">🌙</button>
     <div style="position:relative;">
-        <button onclick="toggleSettings()" style="padding: 10px; background: transparent; font-size: 1.2rem;">⚙️</button>
+        <button onclick="toggleSettings()" style="padding: 10px; background: transparent; border:none; font-size: 1.2rem;">⚙️</button>
         <div id="panel" class="panel">
-            <button style="width:100%; padding:10px; margin-bottom: 8px;" onclick="viewFavourites()">Favourites ⭐</button>
+            <button style="width:100%; padding:12px;" onclick="viewFavourites()">Favourites ⭐</button>
         </div>
     </div>
 </div>
 
-<!-- Mood Selection -->
 <div id="moodScreen" class="screen">
-    <div class="mood-card">
-        <h1 style="margin-top:0;">How are you feeling?</h1>
-        <div class="moods">
-            <button onclick="startVerses('Anxious')">Anxious</button>
-            <button onclick="startVerses('Depressed')">Depressed</button>
-            <button onclick="startVerses('Lonely')">Lonely</button>
-            <button onclick="startVerses('Overwhelmed')">Overwhelmed</button>
-            <button onclick="startVerses('Guilty')">Ashamed</button>
-            <button onclick="startVerses('Betrayed')">Betrayed</button>
-            <button onclick="startVerses('Fearful')">Fearful</button>
-            <button onclick="startVerses('Restless')">Restless</button>
-        </div>
+    <h1>How are you feeling?</h1>
+    <div class="moods">
+        <button onclick="startVerses('Anxious')">Anxious</button>
+        <button onclick="startVerses('Depressed')">Depressed</button>
+        <button onclick="startVerses('Lonely')">Lonely</button>
+        <button onclick="startVerses('Overwhelmed')">Overwhelmed</button>
+        <button onclick="startVerses('Guilty')">Ashamed</button>
+        <button onclick="startVerses('Betrayed')">Betrayed</button>
+        <button onclick="startVerses('Fearful')">Fearful</button>
+        <button onclick="startVerses('Restless')">Restless</button>
     </div>
 </div>
 
-<!-- Verse Display -->
 <div id="verseScreen" class="screen hidden">
-    <div class="card">
-        <button class="nav-btn" onclick="showScreen('moodScreen')">← Back to Moods</button>
-        <div id="verse" class="verse"></div>
-        <button style="width:100%; padding:14px; margin-bottom:10px;" onclick="showVerse()">Get another Du'a</button>
+    <button class="nav-btn" onclick="showScreen('moodScreen')">← Back to Moods</button>
+    <div id="verse" class="verse"></div>
+    <div style="width: 100%; max-width: 400px; display:flex; flex-direction:column; gap:10px;">
+        <button style="padding:16px;" onclick="showVerse()">Get another Du'a</button>
         <div style="display:flex; gap:10px;">
-            <button id="saveBtn" style="flex:2; padding:10px; background:transparent; border:1px solid var(--gold); color:var(--gold);" onclick="saveFavourite()">Save ⭐</button>
-            <button id="mainCopyBtn" style="flex:1; padding:10px; background:transparent; border:1px solid var(--accent); color:var(--accent);" onclick="copyCurrentVerse()">Copy 📋</button>
+            <button id="saveBtn" style="flex:1; padding:12px;" onclick="saveFavourite()">Save ⭐</button>
+            <button id="mainCopyBtn" style="flex:1; padding:12px;" onclick="copyCurrentVerse()">Copy 📋</button>
         </div>
     </div>
 </div>
 
-<!-- Favourites List -->
 <div id="favScreen" class="screen hidden" style="justify-content: flex-start;">
-    <h2 class="header-title">Favourites</h2>
+    <h2 style="margin-top: 80px; font-weight: 300;">Favourites</h2>
     <button class="nav-btn" onclick="showScreen('moodScreen')">← Back Home</button>
     <div id="favList"></div>
 </div>
@@ -245,8 +272,6 @@ function showVerse() {
     setTimeout(() => {
         box.innerText = list[idx];
         box.classList.add("show");
-        
-        // Reset buttons for the new verse
         saveBtn.innerText = "Save ⭐";
         saveBtn.style.opacity = "1";
         copyBtn.innerText = "Copy 📋";
@@ -289,8 +314,8 @@ function viewFavourites() {
             item.innerHTML = `
                 <div>${v}</div>
                 <div class="fav-actions">
-                    <button class="action-btn copy-btn" onclick="copySpecific('${v}', this)">Copy</button>
-                    <button class="action-btn unsave-btn" onclick="removeFav(${index})">Unsave</button>
+                    <button class="action-btn" style="color:var(--accent); border-color:var(--accent);" onclick="copySpecific('${v.replace(/'/g, "\\'")}', this)">Copy</button>
+                    <button class="action-btn" style="color:red; border-color:red;" onclick="removeFav(${index})">Unsave</button>
                 </div>
             `;
             listDiv.appendChild(item);
