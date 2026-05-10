@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Viewport scaling removed to allow a11y zooming -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <!-- PWA Primary Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,7 +13,7 @@
     <title>Invocation</title>
     
     <!-- External Resources -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
@@ -40,141 +41,166 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- HEADER --- */
+        /* --- HEADER & SETTINGS --- */
         header {
             position: fixed; top: 0; left: 0; right: 0;
-            padding: 25px 30px;
-            display: flex; justify-content: space-between; align-items: center;
+            padding: 25px 30px; display: flex; justify-content: space-between; align-items: center;
             z-index: 2005;
         }
-
         .brand-link {
-            font-size: 12px; letter-spacing: 5px;
-            text-transform: uppercase; font-weight: 600;
+            font-size: 12px; letter-spacing: 5px; text-transform: uppercase; font-weight: 600;
             opacity: 0.8; cursor: pointer;
         }
-
         .settings-trigger {
             background: none; border: none; font-size: 1.4rem;
-            opacity: 0.8; cursor: pointer; padding: 5px;
-            transition: opacity 0.3s;
+            opacity: 0.8; cursor: pointer; padding: 5px; transition: opacity 0.3s;
         }
+        
+        /* A11y Focus States */
+        button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+        .panel { 
+            position: absolute; right: 30px; top: 75px; 
+            background: var(--btn-bg); backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px); padding: 25px; border-radius: 28px; 
+            width: 240px; border: 1px solid rgba(255, 255, 255, 0.1); z-index: 2100;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            /* Smooth toggle animations */
+            opacity: 0; pointer-events: none; transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .panel.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .panel-btn { width: 100%; padding: 15px; font-weight: 600; margin-bottom: 15px; }
+        .theme-header { font-size: 10px; opacity: 0.4; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }
+        .theme-list { display: grid; gap: 8px; }
+        .theme-list button { padding: 10px; }
 
         /* --- SCREENS --- */
         .screen { 
-            position: absolute; inset: 0; 
-            display: flex; flex-direction: column; 
+            position: absolute; inset: 0; display: flex; flex-direction: column; 
             justify-content: center; align-items: center; 
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            padding: 20px;
+            transition: opacity 0.5s ease, transform 0.5s ease; padding: 20px;
         }
         .hidden { opacity: 0 !important; pointer-events: none; transform: translateY(15px); }
+        .back-btn { background: none; border: none; color: var(--accent); margin-bottom: 20px; letter-spacing: 2px; font-size: 11px; }
+
+        /* Welcome Screen Typography */
+        #welcomeScreen { z-index: 3000; background: var(--bg); text-align: center; cursor: pointer; }
+        .welcome-title { font-weight: 300; letter-spacing: 14px; text-transform: uppercase; font-size: 2.2rem; margin-bottom: 20px; }
+        .welcome-subtitle { font-style: italic; opacity: 0.7; font-weight: 300; max-width: 280px; line-height: 2; margin: 0 auto; }
+        .enter-hint { position: absolute; bottom: 60px; font-size: 9px; letter-spacing: 5px; opacity: 0.4; width: 100%; left: 0; text-align: center; }
+        .screen-title { font-weight: 300; margin-bottom: 10px; opacity: 0.9; }
 
         /* --- CAROUSEL --- */
         .mood-container {
-            width: 100%; overflow-x: auto; display: flex;
-            scroll-snap-type: x mandatory; padding: 40px 0;
+            width: 100%; overflow-x: auto; display: flex; scroll-snap-type: x mandatory; padding: 40px 0;
             scrollbar-width: none; -webkit-overflow-scrolling: touch;
         }
         .mood-container::-webkit-scrollbar { display: none; }
         .spacer { flex: 0 0 15vw; }
-
         .mood-card {
             flex: 0 0 70vw; height: 380px; margin: 0 15px;
-            background: var(--card-bg); backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 40px; scroll-snap-align: center;
+            background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 40px; scroll-snap-align: center;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer; text-align: center;
-            transition: transform 0.4s ease;
+            cursor: pointer; text-align: center; transition: transform 0.4s ease;
         }
-
+        .mood-card:hover, .mood-card:focus-visible { transform: scale(1.02); }
         .mood-card h3 { font-size: 26px; font-weight: 300; letter-spacing: 1px; margin-bottom: 15px; }
-        .mood-card p { font-size: 13px; opacity: 0.6; font-style: italic; max-width: 80%; line-height: 1.6; }
+        .mood-card p { font-size: 13px; opacity: 0.6; font-style: italic; max-width: 80%; line-height: 1.6; margin: 0; }
 
-        /* --- VERSE AREA --- */
-        #share-container {
-            padding: 40px; border-radius: 30px; text-align: center;
-            width: 100%; max-width: 500px;
+        /* --- VERSE AREA & TYPOGRAPHY --- */
+        #share-container { padding: 40px; border-radius: 30px; text-align: center; width: 100%; max-width: 500px; box-sizing: border-box; }
+        .verse-box { 
+            min-height: 180px; margin-bottom: 20px; 
+            opacity: 0; transition: opacity 0.4s ease; display: flex; flex-direction: column; justify-content: center;
         }
-        .verse { 
-            font-size: 22px; line-height: 1.8; font-weight: 400;
-            min-height: 180px; margin-bottom: 20px; white-space: pre-line; 
-            opacity: 0; transition: opacity 0.4s ease;
-        }
-        .verse.show { opacity: 1; }
+        .verse-box.show { opacity: 1; }
+        
+        .arabic-text { font-family: 'Amiri', serif; font-size: 32px; line-height: 1.6; margin-bottom: 15px; direction: rtl; font-weight: 700; }
+        .translit-text { font-size: 14px; opacity: 0.7; font-style: italic; margin-bottom: 10px; }
+        .english-text { font-size: 16px; font-weight: 400; line-height: 1.6; }
 
         /* --- BUTTONS --- */
         button { 
             border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 20px; 
             background: var(--btn-bg); color: var(--text); cursor: pointer; 
-            transition: all 0.3s ease; backdrop-filter: blur(15px); 
-            -webkit-backdrop-filter: blur(15px); outline: none;
+            transition: all 0.3s ease; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); outline: none;
         }
+        button:hover { background: rgba(128, 128, 128, 0.3); }
+        .btn-group { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 12px; }
+        .btn-row { display: flex; gap: 10px; }
         .action-btn { padding: 18px; font-weight: 600; letter-spacing: 1px; width: 100%; }
         .sub-btn { flex: 1; padding: 14px; font-size: 13px; }
 
-        /* --- SETTINGS PANEL --- */
-        .panel { 
-            display: none; position: absolute; right: 30px; top: 75px; 
-            background: var(--btn-bg); backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px); padding: 25px; border-radius: 28px; 
-            width: 240px; border: 1px solid rgba(255, 255, 255, 0.1); z-index: 2100;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        }
+        /* --- FAVOURITES SCREEN --- */
+        .fav-scroll-container { justify-content: flex-start; overflow-y: auto; padding-top: 100px; }
+        .fav-title { font-weight: 300; letter-spacing: 3px; text-transform: uppercase; font-size: 16px; margin-bottom: 20px; }
+        #favList { width: 100%; max-width: 500px; padding-bottom: 40px; }
+        .fav-item { padding: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .remove-btn { margin-top: 15px; background: none; border: none; color: #ff5f5f; font-size: 10px; letter-spacing: 1px; }
+        .empty-favs { opacity: 0.4; text-align: center; margin-top: 40px; }
 
-        #welcomeScreen { z-index: 3000; background: var(--bg); text-align: center; cursor: pointer; }
+        /* --- TOAST NOTIFICATIONS --- */
+        .toast {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.7); color: #fff; padding: 12px 24px; border-radius: 30px;
+            font-size: 14px; font-weight: 400; z-index: 4000; opacity: 0; pointer-events: none;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
 <body class="deepsea">
 
 <header id="mainHeader" class="hidden">
     <div class="brand-link" onclick="showScreen('moodScreen')">Invocation</div>
-    <button class="settings-trigger" onclick="toggleSettings()">⚙️</button>
+    <button class="settings-trigger" aria-label="Settings" onclick="toggleSettings(event)">⚙️</button>
     <div id="panel" class="panel">
-        <button style="width:100%; padding:15px; margin-bottom:15px; font-weight:600;" onclick="viewFavourites()">⭐ Favourites</button>
-        <div style="font-size:10px; opacity:0.4; text-transform:uppercase; letter-spacing:2px; margin-bottom:12px;">Themes</div>
-        <div style="display:grid; gap:8px;">
-            <button onclick="setTheme('deepsea')" style="padding:10px;">Deep Sea</button>
-            <button onclick="setTheme('mist')" style="padding:10px;">Morning Mist</button>
-            <button onclick="setTheme('midnight')" style="padding:10px;">Midnight</button>
-            <button onclick="setTheme('olive')" style="padding:10px;">Olive Grove</button>
-            <button onclick="setTheme('golden')" style="padding:10px;">Golden Hour</button>
+        <button class="panel-btn" onclick="viewFavourites()">⭐ Favourites</button>
+        <div class="theme-header">Themes</div>
+        <div class="theme-list">
+            <button onclick="setTheme('deepsea')">Deep Sea</button>
+            <button onclick="setTheme('mist')">Morning Mist</button>
+            <button onclick="setTheme('midnight')">Midnight</button>
+            <button onclick="setTheme('olive')">Olive Grove</button>
+            <button onclick="setTheme('golden')">Golden Hour</button>
         </div>
     </div>
 </header>
 
 <!-- Welcome Screen -->
 <div id="welcomeScreen" class="screen" onclick="enterApp()">
-    <h1 style="font-weight:300; letter-spacing:14px; text-transform:uppercase; font-size:2.2rem; margin-bottom: 20px;">Invocation</h1>
-    <p style="font-style:italic; opacity:0.7; font-weight:300; max-width:280px; line-height:2;">"Whispered du’as for every state of the heart"</p>
-    <div style="position:absolute; bottom:60px; font-size:9px; letter-spacing:5px; opacity:0.4;">Tap to enter</div>
+    <h1 class="welcome-title">Invocation</h1>
+    <p class="welcome-subtitle">"Whispered du’as for every state of the heart"</p>
+    <div class="enter-hint">Tap to enter</div>
 </div>
 
 <!-- Mood Carousel -->
 <div id="moodScreen" class="screen hidden">
-    <h2 style="font-weight:300; margin-bottom:10px; opacity:0.9;">How is your heart?</h2>
+    <h2 class="screen-title">How is your heart?</h2>
     <div class="mood-container">
         <div class="spacer"></div>
-        <div class="mood-card" onclick="startVerses('Anxious')"><h3>Anxious</h3><p>For when the world feels too loud.</p></div>
-        <div class="mood-card" onclick="startVerses('Depressed')"><h3>Depressed</h3><p>For when the light feels distant.</p></div>
-        <div class="mood-card" onclick="startVerses('Lonely')"><h3>Lonely</h3><p>Reminding you He is always near.</p></div>
-        <div class="mood-card" onclick="startVerses('Overwhelmed')"><h3>Overwhelmed</h3><p>Seeking ease within the burden.</p></div>
-        <div class="mood-card" onclick="startVerses('Guilty')"><h3>Ashamed</h3><p>Returning to Infinite Mercy.</p></div>
-        <div class="mood-card" onclick="startVerses('Betrayed')"><h3>Betrayed</h3><p>When only One remains faithful.</p></div>
-        <div class="mood-card" onclick="startVerses('Fearful')"><h3>Fearful</h3><p>Finding courage in His Strength.</p></div>
-        <div class="mood-card" onclick="startVerses('Restless')"><h3>Restless</h3><p>Stillness through remembrance.</p></div>
+        <button class="mood-card" onclick="startVerses('Anxious')"><h3>Anxious</h3><p>For when the world feels too loud.</p></button>
+        <button class="mood-card" onclick="startVerses('Depressed')"><h3>Depressed</h3><p>For when the light feels distant.</p></button>
+        <button class="mood-card" onclick="startVerses('Lonely')"><h3>Lonely</h3><p>Reminding you He is always near.</p></button>
+        <button class="mood-card" onclick="startVerses('Overwhelmed')"><h3>Overwhelmed</h3><p>Seeking ease within the burden.</p></button>
+        <button class="mood-card" onclick="startVerses('Guilty')"><h3>Ashamed</h3><p>Returning to Infinite Mercy.</p></button>
+        <button class="mood-card" onclick="startVerses('Betrayed')"><h3>Betrayed</h3><p>When only One remains faithful.</p></button>
+        <button class="mood-card" onclick="startVerses('Fearful')"><h3>Fearful</h3><p>Finding courage in His Strength.</p></button>
+        <button class="mood-card" onclick="startVerses('Restless')"><h3>Restless</h3><p>Stillness through remembrance.</p></button>
         <div class="spacer"></div>
     </div>
 </div>
 
 <!-- Verse Display -->
 <div id="verseScreen" class="screen hidden">
-    <button style="background:none; border:none; color:var(--accent); margin-bottom:20px; letter-spacing:2px; font-size:11px;" onclick="showScreen('moodScreen')">← CHANGE MOOD</button>
-    <div id="share-container"><div id="verse" class="verse"></div></div>
-    <div style="width:100%; max-width:380px; display:flex; flex-direction:column; gap:12px;">
+    <button class="back-btn" onclick="showScreen('moodScreen')">← CHANGE MOOD</button>
+    <div id="share-container"><div id="verse" class="verse-box"></div></div>
+    <div class="btn-group">
         <button class="action-btn" onclick="showVerse()">Another Du'a, Please</button>
-        <div style="display:flex; gap:10px;">
+        <div class="btn-row">
             <button id="saveBtn" class="sub-btn" onclick="saveFavourite()">Save ⭐</button>
             <button id="copyBtn" class="sub-btn" onclick="copyVerse()">Copy 📋</button>
             <button class="sub-btn" onclick="shareAsImage()">Share 📸</button>
@@ -183,29 +209,90 @@
 </div>
 
 <!-- Favourites -->
-<div id="favScreen" class="screen hidden" style="justify-content:flex-start; overflow-y:auto; padding-top:100px;">
-    <button style="background:none; border:none; color:var(--accent); margin-bottom:20px; letter-spacing:2px; font-size:11px;" onclick="showScreen('moodScreen')">← BACK TO HOME</button>
-    <h2 style="font-weight:300; letter-spacing:3px; text-transform:uppercase; font-size:16px;">Saved Du'as</h2>
-    <div id="favList" style="width:100%; max-width:500px;"></div>
+<div id="favScreen" class="screen hidden fav-scroll-container">
+    <button class="back-btn" onclick="showScreen('moodScreen')">← BACK TO HOME</button>
+    <h2 class="fav-title">Saved Du'as</h2>
+    <div id="favList"></div>
 </div>
 
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
+
 <script>
+    // Constants for cleaner code
+    const FAV_KEY = 'inv-favs';
+    const THEME_KEY = 'inv-theme';
+
     const moodVerses = {
         Anxious: ["اللهم إني أعوذ بك من الهم والحزن\nAllāhumma innī a‘ūdhu bika min al-hammi wal-ḥazan\nO Allah, I seek refuge in You from anxiety and sorrow.", "حسبي الله لا إله إلا هو عليه توكلت\nḤasbiyallāhu lā ilāha illā Huwa, ‘alayhi tawakkaltu\nAllah is sufficient for me.", "اللهم رحمتك أرجو فلا تكلني إلى نفسي طرفة عين\nAllāhumma raḥmataka arjū fa-lā takilnī ilā nafsī ṭarfata ‘ayn\nO Allah, I hope for Your mercy."],
         Depressed: ["لَا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ\nLā ilāha illā anta subḥānaka innī kuntu minaẓ-ẓālimīn\nThere is no deity except You; glory be to You.", "إِنَّ مَعَ الْعُسْرِ يُسْرًا\nInna ma‘al usri yusra\nIndeed, with hardship comes ease.", "اللَّهُمَّ اشْفِ صَدْرِي\nAllahumma ishfi sadri\nO Allah, heal my heart."],
         Lonely: ["اللَّهُمَّ آنِسْ وَحْشَتِي\nAllahumma anis wahshati\nO Allah, comfort my loneliness.", "وَهُوَ مَعَكُمْ أَيْنَ مَا كُنتُمْ\nWa huwa ma‘akum ayna mā kuntum\nAnd He is with you wherever you are.", "رَبِّ لَا تَذَرْنِي فَرْدًا وَأَنْتَ خَيْرُ الْوارِثِينَ\nRabbi la tadharni fardan wa anta khayrul waritheen\nMy Lord, do not leave me alone."],
         Overwhelmed: ["لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا\nLa yukallifullahu nafsan illa wus‘aha\nAllah does not burden a soul beyond what it can bear.", "رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي\nRabbi ishrah li sadri wa yassir li amri\nMy Lord, expand my chest and make my task easy.", "حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ\nHasbunallahu wa ni‘mal wakeel\nAllah is sufficient for us."],
-        Guilty: ["لَا تَقْنَطُوا مِنْ رَحْمَةِ اللَّهِ\nLa taqnatoo min rahmatillah\nDo not despair of the mercy of Allah.", "رَبِّ اغْفِرْ لِي وَتُبْ عَلَيَّ\nRabbi ighfir li wa tub ‘alayya\nMy Lord, forgive me and accept my repentance.", "إِنَّ اللَّهَ يَغْفِرُ الذُّنُوبَ جَمِيعًا\nInnallaha yaghfiru dhunooba jamee‘a\nIndeed, Allah forgets all sins."],
+        Guilty: ["لَا تَقْنَطُوا مِنْ رَحْمَةِ اللَّهِ\nLa taqnatoo min rahmatillah\nDo not despair of the mercy of Allah.", "رَبِّ اغْفِرْ لِي وَتُبْ عَلَيَّ\nRabbi ighfir li wa tub ‘alayya\nMy Lord, forgive me and accept my repentance.", "إِنَّ اللَّهَ يَغْفِرُ الذُّنُوبَ جَمِيعًا\nInnallaha yaghfiru dhunooba jamee‘a\nIndeed, Allah forgives all sins."],
         Betrayed: ["فَصَبْرٌ جَمِيلٌ\nFasabrun jameel\nSo patience is most fitting.", "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ\nInna Allaha ma‘a as-sabireen\nIndeed, Allah is with the patient.", "وَأُفَوِّضُ أَمْرِي إِلَى اللَّهِ\nWa ufawwidu amri ilallah\nI entrust my affair to Allah."],
         Fearful: ["لَا تَخَافْ إِنَّ اللَّهَ مَعَنَا\nLa takhaf innallaha ma‘ana\nDo not fear, indeed Allah is with us.", "إِنِّي تَوَكَّلْتُ عَلَى اللَّهِ\nInni tawakkaltu ‘ala Allah\nIndeed, I place my trust in Allah.", "اللَّهُمَّ آمِنْ رَوْعَاتِي\nAllahumma amin raw‘ati\nO Allah, grant me safety in my fear."],
         Restless: ["أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ\nAla bidhikrillahi tatma’innul quloob\nVerily, in the remembrance of Allah do hearts find rest.", "اللَّهُمَّ أَلْهِمْنِي السَّكِينَةَ\nAllahumma alhimni as-sakeenata\nO Allah, inspire in me peace.", "يَا حَيُّ يَا قَيُّومُ أَصْلِحْ لِي شَأْنِي كُلَّهُ\nYa Hayyu Ya Qayyum aslih li sha’ni kullahu\nO Ever-Living, set right all my affairs."]
     };
 
     let currentMood = "", lastIdx = -1;
+    let toastTimeout;
 
-    function enterApp() { document.getElementById('welcomeScreen').classList.add('hidden'); setTimeout(() => { document.getElementById('welcomeScreen').style.display = 'none'; document.getElementById('mainHeader').classList.remove('hidden'); document.getElementById('moodScreen').classList.remove('hidden'); }, 500); }
-    function showScreen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden')); document.getElementById('panel').style.display = "none"; document.getElementById(id).classList.remove('hidden'); }
-    function startVerses(mood) { currentMood = mood; showScreen('verseScreen'); showVerse(); }
+    // --- UTILITIES ---
+
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.innerText = message;
+        toast.classList.add('show');
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Safely parse LocalStorage
+    function getFavs() {
+        try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } 
+        catch (e) { return []; }
+    }
+
+    function saveFavsToLocal(favArray) {
+        try { localStorage.setItem(FAV_KEY, JSON.stringify(favArray)); } 
+        catch (e) { console.error('Error saving to localStorage', e); }
+    }
+
+    // Parses 3-line string into structured HTML
+    function formatVerse(text) {
+        const parts = text.split('\n');
+        if(parts.length === 3) {
+            return `<div class="arabic-text">${parts[0]}</div>
+                    <div class="translit-text">${parts[1]}</div>
+                    <div class="english-text">${parts[2]}</div>`;
+        }
+        return `<div class="english-text">${text}</div>`; // Fallback
+    }
+
+    // --- NAVIGATION ---
+
+    function enterApp() { 
+        document.getElementById('welcomeScreen').classList.add('hidden'); 
+        setTimeout(() => { 
+            document.getElementById('welcomeScreen').style.display = 'none'; 
+            document.getElementById('mainHeader').classList.remove('hidden'); 
+            document.getElementById('moodScreen').classList.remove('hidden'); 
+        }, 500); 
+    }
+
+    function showScreen(id) { 
+        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden')); 
+        document.getElementById('panel').classList.remove('show'); 
+        document.getElementById(id).classList.remove('hidden'); 
+    }
+
+    // --- CORE LOGIC ---
+
+    function startVerses(mood) { 
+        currentMood = mood; 
+        showScreen('verseScreen'); 
+        showVerse(); 
+    }
     
     function showVerse() { 
         const v = document.getElementById('verse'); 
@@ -213,41 +300,42 @@
         let idx; 
         do { idx = Math.floor(Math.random() * list.length); } while (idx === lastIdx && list.length > 1); 
         lastIdx = idx; 
+        
         v.classList.remove('show'); 
         setTimeout(() => { 
-            v.innerText = list[idx]; 
+            v.dataset.rawText = list[idx]; // Store raw text for copying/saving
+            v.innerHTML = formatVerse(list[idx]);
             v.classList.add('show'); 
-            document.getElementById('saveBtn').innerText = "Save ⭐"; 
         }, 200); 
     }
     
     function saveFavourite() {
-        let favs = JSON.parse(localStorage.getItem('inv-favs')) || [];
-        const text = document.getElementById('verse').innerText.trim();
-        const btn = document.getElementById('saveBtn');
-        if(!favs.includes(text)) {
-            favs.push(text);
-            localStorage.setItem('inv-favs', JSON.stringify(favs));
-            btn.innerText = "Saved! ⭐";
+        let favs = getFavs();
+        const rawText = document.getElementById('verse').dataset.rawText;
+        
+        if(!favs.includes(rawText)) {
+            favs.push(rawText);
+            saveFavsToLocal(favArray = favs);
+            showToast("Saved to Favourites ⭐");
         } else { 
-            btn.innerText = "Already Saved"; 
+            showToast("Already in Favourites");
         }
-        setTimeout(() => { btn.innerText = "Save ⭐"; }, 600);
     }
 
     function viewFavourites() {
         const screen = document.getElementById('favScreen'); 
         screen.scrollTo(0,0);
         const list = document.getElementById('favList');
-        const favs = JSON.parse(localStorage.getItem('inv-favs')) || [];
-        list.innerHTML = favs.length ? "" : "<p style='opacity:0.4; text-align:center; margin-top:40px;'>No saved du'as yet.</p>";
+        const favs = getFavs();
+        
+        list.innerHTML = favs.length ? "" : "<p class='empty-favs'>No saved du'as yet.</p>";
+        
         [...favs].reverse().forEach((f, i) => {
             const d = document.createElement('div'); 
-            d.style.padding = "25px"; 
-            d.style.borderBottom = "1px solid rgba(255,255,255,0.1)";
+            d.className = "fav-item";
             d.innerHTML = `
-                <div style="font-size:15px; line-height:1.6;">${f}</div>
-                <button onclick="removeFav(${favs.length-1-i})" style="margin-top:15px; background:none; border:none; color:#ff5f5f; font-size:10px; letter-spacing:1px;">REMOVE</button>
+                ${formatVerse(f)}
+                <button class="remove-btn" onclick="removeFav(${favs.length-1-i})">REMOVE</button>
             `;
             list.appendChild(d);
         });
@@ -255,51 +343,97 @@
     }
 
     function removeFav(i) { 
-        let favs = JSON.parse(localStorage.getItem('inv-favs')); 
+        let favs = getFavs(); 
         favs.splice(i, 1); 
-        localStorage.setItem('inv-favs', JSON.stringify(favs)); 
+        saveFavsToLocal(favs); 
         viewFavourites(); 
+        showToast("Removed from Favourites");
     }
 
     function copyVerse() { 
-        navigator.clipboard.writeText(document.getElementById('verse').innerText); 
-        const btn = document.getElementById('copyBtn'); 
-        btn.innerText = "Copied!"; 
-        setTimeout(() => btn.innerText = "Copy 📋", 2000); 
+        const textToCopy = document.getElementById('verse').dataset.rawText;
+        
+        // Robust clipboard fallback
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast("Copied to clipboard 📋");
+            }).catch(err => {
+                fallbackCopyTextToClipboard(textToCopy);
+            });
+        } else {
+            fallbackCopyTextToClipboard(textToCopy);
+        }
     }
+
+    function fallbackCopyTextToClipboard(text) {
+        var textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showToast("Copied to clipboard 📋");
+        } catch (err) {
+            showToast("Failed to copy");
+        }
+        document.body.removeChild(textArea);
+    }
+
+    // --- SETTINGS & EXTRAS ---
 
     function setTheme(t) { 
         document.body.className = t; 
-        localStorage.setItem('inv-theme', t); 
+        try { localStorage.setItem(THEME_KEY, t); } catch(e) {}
     }
 
-    function toggleSettings() { 
+    function toggleSettings(event) { 
+        event.stopPropagation(); // Prevent immediate close trigger
         const p = document.getElementById('panel'); 
-        p.style.display = p.style.display === "block" ? "none" : "block"; 
+        p.classList.toggle('show');
     }
+
+    // Click outside to close panel
+    document.addEventListener('click', (e) => {
+        const panel = document.getElementById('panel');
+        if (panel.classList.contains('show') && !panel.contains(e.target)) {
+            panel.classList.remove('show');
+        }
+    });
 
     function shareAsImage() { 
         const container = document.getElementById('share-container'); 
         const originalBg = container.style.background; 
+        
+        // Temporarily apply body background to container for image render
         container.style.background = getComputedStyle(document.body).backgroundImage; 
+        
+        showToast("Preparing image...");
         html2canvas(container, { backgroundColor: null, scale: 2 }).then(canvas => { 
             const link = document.createElement('a'); 
             link.download = `Invocation-${currentMood}.png`; 
             link.href = canvas.toDataURL(); 
             link.click(); 
             container.style.background = originalBg; 
+        }).catch(() => {
+            showToast("Could not generate image");
+            container.style.background = originalBg; 
         }); 
     }
 
-    window.onload = () => setTheme(localStorage.getItem('inv-theme') || 'deepsea');
+    // Initialization
+    window.onload = () => {
+        let savedTheme = 'deepsea';
+        try { savedTheme = localStorage.getItem(THEME_KEY) || 'deepsea'; } catch(e) {}
+        setTheme(savedTheme);
+    };
 
     // --- PWA SERVICE WORKER REGISTRATION ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then(reg => {
-                console.log('Service Worker registered!');
-            }).catch(err => {
-                console.log('Registration failed:', err);
+            navigator.serviceWorker.register('./sw.js').catch(err => {
+                console.log('SW Registration failed:', err);
             });
         });
     }
