@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- PWA Primary Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#09203f">
+    <link rel="manifest" href="manifest.json">
+    
     <title>Invocation</title>
     
     <!-- External Resources -->
@@ -176,7 +182,7 @@
     </div>
 </div>
 
-<!-- Favourites (Updated with Navigation) -->
+<!-- Favourites -->
 <div id="favScreen" class="screen hidden" style="justify-content:flex-start; overflow-y:auto; padding-top:100px;">
     <button style="background:none; border:none; color:var(--accent); margin-bottom:20px; letter-spacing:2px; font-size:11px;" onclick="showScreen('moodScreen')">← BACK TO HOME</button>
     <h2 style="font-weight:300; letter-spacing:3px; text-transform:uppercase; font-size:16px;">Saved Du'as</h2>
@@ -215,12 +221,10 @@
         }, 200); 
     }
     
-    // Updated Save Logic with 600ms Snappy Reset
     function saveFavourite() {
         let favs = JSON.parse(localStorage.getItem('inv-favs')) || [];
         const text = document.getElementById('verse').innerText.trim();
         const btn = document.getElementById('saveBtn');
-        
         if(!favs.includes(text)) {
             favs.push(text);
             localStorage.setItem('inv-favs', JSON.stringify(favs));
@@ -228,7 +232,6 @@
         } else { 
             btn.innerText = "Already Saved"; 
         }
-        
         setTimeout(() => { btn.innerText = "Save ⭐"; }, 600);
     }
 
@@ -238,7 +241,6 @@
         const list = document.getElementById('favList');
         const favs = JSON.parse(localStorage.getItem('inv-favs')) || [];
         list.innerHTML = favs.length ? "" : "<p style='opacity:0.4; text-align:center; margin-top:40px;'>No saved du'as yet.</p>";
-        
         [...favs].reverse().forEach((f, i) => {
             const d = document.createElement('div'); 
             d.style.padding = "25px"; 
@@ -290,6 +292,17 @@
     }
 
     window.onload = () => setTheme(localStorage.getItem('inv-theme') || 'deepsea');
+
+    // --- PWA SERVICE WORKER REGISTRATION ---
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').then(reg => {
+                console.log('Service Worker registered!');
+            }).catch(err => {
+                console.log('Registration failed:', err);
+            });
+        });
+    }
 </script>
 </body>
 </html>
