@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Invocation | Spiritual Du'as</title>
+    <title>Daily Invocation | Spiritual Du'as</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -99,14 +99,21 @@
 
         .back-nav { background: none; border: none; color: var(--accent); margin-bottom: 20px; letter-spacing: 3px; font-size: 10px; cursor: pointer; text-transform: uppercase; font-weight: 600; padding: 12px; width: fit-content; align-self: center; }
 
+        /* Premium Transition Container */
+        #verseContent {
+            will-change: transform, opacity;
+        }
+
         .arabic { font-family: 'Amiri', serif; font-size: clamp(24px, 6vw, 32px); line-height: 1.8; margin-bottom: 20px; direction: rtl; text-align: center; padding: 0 10px; }
         .translit { font-size: 13px; opacity: 0.5; font-style: italic; margin-bottom: 12px; text-align: center; line-height: 1.6; padding: 0 25px; }
         .translation { font-size: 16px; line-height: 1.6; text-align: center; padding: 0 25px; font-weight: 300; }
 
         .btn-stack { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; margin-top: 35px; }
-        .main-btn { padding: 18px; border-radius: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; font-size: 11px; background: var(--btn-bg); color: inherit; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; }
+        .main-btn { padding: 18px; border-radius: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; font-size: 11px; background: var(--btn-bg); color: inherit; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; transition: transform 0.2s, background 0.2s; }
+        .main-btn:active { transform: scale(0.98); background: rgba(255,255,255,0.15); }
         .main-btn.hidden { display: none; }
-        .icon-btn { flex: 1; padding: 14px; border-radius: 16px; font-size: 10px; text-transform: uppercase; background: var(--btn-bg); color: inherit; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; font-weight: 600; letter-spacing: 1px; }
+        .icon-btn { flex: 1; padding: 14px; border-radius: 16px; font-size: 10px; text-transform: uppercase; background: var(--btn-bg); color: inherit; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; font-weight: 600; letter-spacing: 1px; transition: transform 0.2s; }
+        .icon-btn:active { transform: scale(0.95); }
 
         .list-stack { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 500px; padding-bottom: 120px; margin: 0 auto; }
         .list-item { padding: 25px; border-radius: 28px; background: var(--btn-bg); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; text-align: center; }
@@ -130,14 +137,14 @@
 <div id="loader"><div class="spinner"></div></div>
 
 <header id="appHeader">
-    <div class="brand" onclick="forceHome()">Invocation</div>
+    <div class="brand" onclick="forceHome()">Daily Invocation</div>
     <button class="settings-btn" id="triggerSettings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" />
         </svg>
     </button>
     <div id="settingsPanel" class="panel">
-        <div style="font-size: 9px; opacity: 0.4; letter-spacing: 2px; margin: 0 5px 15px;">ATMOSPHERE</div>
+        <div style="font-size: 9px; opacity: 0.4; letter-spacing: 2px; margin: 0 5px 15px;">THEMES</div>
         <button class="panel-btn" onclick="setTheme('deepsea')">Deep Sea <span class="theme-dot" style="background:#09203f"></span></button>
         <button class="panel-btn" onclick="setTheme('mist')">Mist <span class="theme-dot" style="background:#f5f7fa"></span></button>
         <button class="panel-btn" onclick="setTheme('midnight')">Midnight <span class="theme-dot" style="background:#0f1115"></span></button>
@@ -147,7 +154,7 @@
 </header>
 
 <div id="welcomeScreen" class="screen active">
-    <h1 class="welcome-title">Invocation</h1>
+    <h1 class="welcome-title">Daily Invocation</h1>
     <p class="welcome-subtitle">Healing du’as for the restless heart</p>
     <p style="font-size: 10px; margin-top: 50px; letter-spacing: 4px; opacity: 0.4; font-weight: 600;">TAP TO START</p>
 </div>
@@ -171,7 +178,7 @@
         <div id="verseContent"></div>
     </div>
     <div class="btn-stack">
-        <button id="nextBtn" class="main-btn" onclick="nextVerse()">Next Du'a</button>
+        <button id="nextBtn" class="main-btn" onclick="nextVerse()">Another Du'a please</button>
         <div style="display:flex; gap:8px;">
             <button class="icon-btn" onclick="saveFav()">Save</button>
             <button class="icon-btn" onclick="copyVerse()">Copy</button>
@@ -229,7 +236,7 @@
         ],
         Lonely: [
             "اللَّهُمَّ آنِسْ وَحْشَتِي\nAllāhumma ānis waḥshatī\nO Allah, comfort my loneliness.",
-            "وَهُوة مَعَكُمْ أَيْنَ مَا كُنتُمْ\nWa huwa ma‘akum ayna mā kuntum\nAnd He is with you wherever you are.",
+            "وَهُوَ مَعَكُمْ أَيْنَ مَا كُنتُمْ\nWa huwa ma‘akum ayna mā kuntum\nAnd He is with you wherever you are.",
             "وَنَحْنُ أَقْرَبُ إِلَيْهِ مِنْ حَبْلِ الْوَرِيدِ\nWa naḥnu aqrabu ilayhi min ḥablil-warīd\nAnd We are closer to him than his jugular vein.",
             "أَلَيْسَ اللَّهُ بِكَافٍ عَبْدَهُ\nAlaysallāhu bi-kāfin ‘abdah\nIs Allah not sufficient for His servant?",
             "رَبِّ إِنِّي لِمَا أَنزَلْتَ إِلَيَّ مِنْ خَيْرٍ فَقِيرٌ\nRabbi innī limā anzalta ilayya min khayrin faqīr\nMy Lord, indeed I am in need of whatever good You would send down to me.",
@@ -399,13 +406,16 @@
         navigate('verseScreen');
     };
 
-    const nextVerse = () => {
+    // Premium Sequential Animation Logic
+    const nextVerse = async () => {
         const pool = dbData[state.currentMood];
         if (!pool) return;
-        haptic();
+        
+        haptic(); // Preserve mechanical feel
         
         const isProtection = protectionLibrary.some(p => p.id === state.currentMood);
         const nextBtn = document.getElementById('nextBtn');
+        const vContent = document.getElementById('verseContent');
         
         if (isProtection) {
             nextBtn.classList.add('hidden');
@@ -413,6 +423,20 @@
             nextBtn.classList.remove('hidden');
         }
 
+        const isCurrentlyVisible = state.currentVerse !== '';
+
+        // 1. STAGGERED FADE-OUT
+        if (isCurrentlyVisible) {
+            nextBtn.style.pointerEvents = 'none'; // Prevent spam clicking
+            vContent.style.transition = 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            vContent.style.opacity = '0';
+            vContent.style.transform = 'translateY(-15px)';
+            
+            // Wait for fade out to complete
+            await new Promise(r => setTimeout(r, 400));
+        }
+
+        // 2. LOGIC SELECTION
         let pick;
         if (pool.length === 1) pick = pool[0];
         else {
@@ -422,14 +446,34 @@
         
         state.currentVerse = pick;
         const p = pick.split('\n');
-        document.getElementById('verseContent').innerHTML = `
+        
+        // 3. PREPARE ENTRY STATE (Without transition so it snaps to start position)
+        vContent.style.transition = 'none';
+        vContent.style.transform = 'translateY(15px)';
+        vContent.style.opacity = '0';
+        
+        vContent.innerHTML = `
             <div class="arabic">${p[0]}</div>
             <div class="translit">${p[1]}</div>
             <div class="translation">${p[2]}</div>
         `;
+
+        // Force browser reflow to apply the initial state before transitioning
+        void vContent.offsetWidth; 
+
+        // 4. SMOOTH PREMIUM FADE-IN
+        vContent.style.transition = 'opacity 0.5s cubic-bezier(0.23, 1, 0.32, 1), transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
+        vContent.style.opacity = '1';
+        vContent.style.transform = 'translateY(0)';
+        
+        if (isCurrentlyVisible) {
+            // Re-enable button right before animation finishes
+            setTimeout(() => { nextBtn.style.pointerEvents = 'auto'; }, 450);
+        }
     };
 
     const saveFav = () => {
+        haptic();
         let favs = JSON.parse(localStorage.getItem('inv_f') || '[]');
         if (favs.some(v => v.text === state.currentVerse)) return showToast("Already saved");
         favs.push({ id: Date.now(), text: state.currentVerse });
@@ -450,13 +494,14 @@
                 <div class="list-item">
                     <div class="arabic" style="font-size:18px;">${p[0]}</div>
                     <div class="translation" style="font-size:13px; margin-top:8px;">${p[2]}</div>
-                    <button style="background:none; border:none; color:#ff6b6b; font-size:9px; margin-top:15px; cursor:pointer;" onclick="deleteFav(${f.id})">REMOVE</button>
+                    <button style="background:none; border:none; color:#ff6b6b; font-size:9px; margin-top:15px; cursor:pointer; padding:8px;" onclick="deleteFav(${f.id})">REMOVE</button>
                 </div>
             `;
         }).join('');
     };
 
     const deleteFav = (id) => {
+        haptic();
         let items = JSON.parse(localStorage.getItem('inv_f') || '[]').filter(f => f.id !== id);
         localStorage.setItem('inv_f', JSON.stringify(items));
         renderFavs();
@@ -464,6 +509,7 @@
     };
 
     const copyVerse = () => {
+        haptic();
         const el = document.createElement('textarea');
         el.value = state.currentVerse;
         document.body.appendChild(el); el.select();
@@ -478,14 +524,23 @@
         l.style.display = 'flex'; l.style.opacity = '0.7';
         html2canvas(document.getElementById('shareArea'), { scale: 2 }).then(canvas => {
             const a = document.createElement('a');
-            a.download = 'Invocation.png'; a.href = canvas.toDataURL(); a.click();
+            a.download = 'Daily_Invocation.png'; 
+            a.href = canvas.toDataURL(); 
+            a.click();
             l.style.display = 'none';
         });
     };
 
-    const setTheme = (t) => { document.body.className = t; showToast(t); };
+    const setTheme = (t) => { 
+        haptic();
+        document.body.className = t; 
+        showToast(t); 
+        document.getElementById('settingsPanel').classList.remove('active');
+    };
 
     window.onload = () => {
+        document.getElementById('welcomeScreen').onclick = () => navigate('moodScreen');
+        
         document.getElementById('moodGrid').innerHTML = '<div style="flex:0 0 10vw;"></div>' + moodCards.map(m => `
             <div class="mood-card" onclick="openMood('${m.id}')">
                 <h3>${m.title}</h3>
@@ -500,7 +555,6 @@
             </div>
         `).join('');
 
-        document.getElementById('welcomeScreen').onclick = () => navigate('moodScreen');
         document.getElementById('triggerSettings').onclick = (e) => {
             e.stopPropagation();
             haptic();
